@@ -154,11 +154,44 @@ export function ReportGenerator() {
     }
   }
 
-  const exportToCSV = (data: any) => {
+  // Defina tipos específicos para os dados do relatório
+  type InventoryData = {
+    codigo: string
+    produto: string
+    categoria: string
+    estoque: number
+    minimo: number
+    valor: string
+  }
+
+  type FinancialData = {
+    data: string
+    tipo: string
+    valor: string
+    documento: string
+    fornecedor?: string
+    cliente?: string
+  }
+
+  type MovementsData = {
+    data: string
+    produto: string
+    tipo: string
+    quantidade: number
+    responsavel: string
+  }
+
+  type ReportData = {
+    title: string
+    data: InventoryData[] | FinancialData[] | MovementsData[] | Record<string, unknown>[]
+    [key: string]: unknown
+  }
+
+  const exportToCSV = (data: ReportData) => {
     if (!data.data || data.data.length === 0) return
 
     const headers = Object.keys(data.data[0]).join(",")
-    const rows = data.data.map((row: any) => Object.values(row).join(",")).join("\n")
+    const rows = data.data.map((row) => Object.values(row).join(",")).join("\n")
     const csvContent = `${headers}\n${rows}`
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
@@ -172,11 +205,11 @@ export function ReportGenerator() {
     document.body.removeChild(link)
   }
 
-  const exportToExcel = (data: any) => {
+  const exportToExcel = (data: ReportData) => {
     if (!data.data || data.data.length === 0) return
 
     const headers = Object.keys(data.data[0]).join("\t")
-    const rows = data.data.map((row: any) => Object.values(row).join("\t")).join("\n")
+    const rows = data.data.map((row) => Object.values(row).join("\t")).join("\n")
     const excelContent = `${headers}\n${rows}`
 
     const blob = new Blob([excelContent], { type: "application/vnd.ms-excel" })
@@ -190,7 +223,7 @@ export function ReportGenerator() {
     document.body.removeChild(link)
   }
 
-  const exportToPDF = (data: any) => {
+  const exportToPDF = (data: ReportData) => {
     const pdfContent = `
       ${data.title}
       Gerado em: ${data.generatedAt}
@@ -198,7 +231,7 @@ export function ReportGenerator() {
       
       ${data.data
         .map(
-          (item: any, index: number) =>
+          (item, index) =>
             `${index + 1}. ${Object.entries(item)
               .map(([key, value]) => `${key}: ${value}`)
               .join(" | ")}`,

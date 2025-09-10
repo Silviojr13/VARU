@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
+import type { Payload } from "recharts/types/component/DefaultTooltipContent"
 
 import { cn } from "@/lib/utils"
 
@@ -104,13 +105,7 @@ ${colorConfig
 
 const ChartTooltip = RechartsPrimitive.Tooltip
 
-type TooltipPayloadItem = {
-  name?: string
-  value?: any
-  color?: string
-  dataKey?: string
-  payload?: any
-}
+type TooltipPayloadItem = Payload<number | string, string>
 
 function ChartTooltipContent({
   active,
@@ -196,7 +191,7 @@ function ChartTooltipContent({
 
           return (
             <div
-              key={item.dataKey}
+              key={typeof item.dataKey === "string" || typeof item.dataKey === "number" ? item.dataKey : `${item.name ?? index}`}
               className={cn(
                 "[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5",
                 indicator === "dot" && "items-center"
@@ -318,10 +313,10 @@ function ChartLegendContent({
 // Helper to extract item config from a payload.
 function getPayloadConfigFromPayload(
   config: ChartConfig,
-  payload: unknown,
+  payload: TooltipPayloadItem | undefined,
   key: string
 ) {
-  if (typeof payload !== "object" || payload === null) {
+  if (!payload || typeof payload !== "object") {
     return undefined
   }
 
