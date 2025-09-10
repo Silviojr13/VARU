@@ -1,8 +1,10 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, TooltipProps } from "recharts"
+import React from "react"
 
+// Dados do gráfico
 const data = [
   { day: "Seg", entradas: 12, saidas: 8 },
   { day: "Ter", entradas: 15, saidas: 12 },
@@ -13,33 +15,41 @@ const data = [
   { day: "Dom", entradas: 2, saidas: 1 },
 ]
 
+// Configuração de cores e labels
 const chartConfig = {
-  entradas: {
-    label: "Entradas",
-    color: "#10b981",
-  },
-  saidas: {
-    label: "Saídas",
-    color: "#ef4444",
-  },
+  entradas: { label: "Entradas", color: "#10b981" },
+  saidas: { label: "Saídas", color: "#ef4444" },
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+// Tipo para cada entry do tooltip
+interface CustomTooltipEntry {
+  dataKey: string
+  value: number
+  color: string
+}
+
+// Tooltip customizado
+const CustomTooltip = (props: any) => {
+  const { active, payload, label } = props
   if (active && payload && payload.length) {
     return (
       <div className="bg-background border rounded-lg p-3 shadow-lg">
-        <p className="font-medium">{`${label}`}</p>
-        {payload.map((entry: any, index: number) => (
-          <p key={index} style={{ color: entry.color }}>
-            {`${entry.dataKey === "entradas" ? "Entradas" : "Saídas"}: ${entry.value}`}
-          </p>
-        ))}
+        <p className="font-medium">{label}</p>
+        {payload.map((entry: any, index: React.Key | null | undefined) => {
+          const e = entry as CustomTooltipEntry
+          return (
+            <p key={index} style={{ color: e.color }}>
+              {`${e.dataKey === "entradas" ? "Entradas" : "Saídas"}: ${e.value}`}
+            </p>
+          )
+        })}
       </div>
     )
   }
   return null
 }
 
+// Componente do gráfico
 export function MovementChart() {
   console.log("[v0] MovementChart rendering with config:", chartConfig)
 
