@@ -56,7 +56,14 @@ export function MovementForm() {
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
-                    <Calendar mode="single" selected={movementDate} onSelect={setMovementDate} initialFocus />
+                    <Calendar
+                      mode="single"
+                      selected={movementDate}
+                      onSelect={setMovementDate}
+                      initialFocus
+                      required
+                    />
+
                   </PopoverContent>
                 </Popover>
               </div>
