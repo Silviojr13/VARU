@@ -1,6 +1,7 @@
 "use client"
 
-import { useToast } from "@/hooks/use-toast"
+// Update the import path if the hook is located elsewhere, for example:
+import { useToast } from "../../hooks/use-toast"
 import {
   Toast,
   ToastClose,
