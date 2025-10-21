@@ -6,6 +6,16 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export default function NovaMovimentacaoPage() {
+  const handleSubmit = (data: any) => {
+    console.log('Submit movement:', data)
+    // In a real app, you would send this data to your API
+  }
+
+  const handleCancel = () => {
+    console.log('Cancel movement creation')
+    // In a real app, you would redirect back to the movements list
+  }
+
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
@@ -21,11 +31,11 @@ export default function NovaMovimentacaoPage() {
               </Button>
               <div>
                 <h1 className="text-3xl font-bold text-foreground">Nova Movimentação</h1>
-                <p className="text-muted-foreground">Registre uma entrada ou saída de produtos</p>
+                <p className="text-muted-foreground">Registre uma nova movimentação de estoque</p>
               </div>
             </div>
 
-            <MovementForm />
+            <MovementForm onSubmit={handleSubmit} onCancel={handleCancel} />
           </div>
         </main>
       </div>
