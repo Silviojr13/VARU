@@ -6,6 +6,16 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export default function NovoClientePage() {
+  const handleSubmit = (data: any) => {
+    console.log('Submit client:', data)
+    // In a real app, you would send this data to your API
+  }
+
+  const handleCancel = () => {
+    console.log('Cancel client creation')
+    // In a real app, you would redirect back to the clients list
+  }
+
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
@@ -25,7 +35,7 @@ export default function NovoClientePage() {
               </div>
             </div>
 
-            <ClientForm />
+            <ClientForm onSubmit={handleSubmit} onCancel={handleCancel} />
           </div>
         </main>
       </div>

@@ -8,214 +8,226 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Switch } from "@/components/ui/switch"
+import { Badge } from "@/components/ui/badge"
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { CalendarIcon, Truck } from "lucide-react"
+import { format } from "date-fns"
+import { ptBR } from "date-fns/locale"
 
-export function SupplierForm() {
-  const [isActive, setIsActive] = useState(true)
+interface SupplierFormProps {
+  supplier?: any
+  onSubmit: (data: any) => void
+  onCancel: () => void
+}
+
+export function SupplierForm({ supplier, onSubmit, onCancel }: SupplierFormProps) {
+  const [formData, setFormData] = useState({
+    id: supplier?.id || "",
+    name: supplier?.name || "",
+    cnpj: supplier?.cnpj || "",
+    contactName: supplier?.contactName || "",
+    email: supplier?.email || "",
+    phone: supplier?.phone || "",
+    mobile: supplier?.mobile || "",
+    address: supplier?.address || "",
+    city: supplier?.city || "",
+    state: supplier?.state || "",
+    zipCode: supplier?.zipCode || "",
+    isActive: supplier?.isActive ?? 1,
+  })
+
+  const handleChange = (field: string, value: string | number) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    onSubmit(formData)
+  }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Cadastro de Fornecedor</CardTitle>
+        <CardTitle>{supplier ? "Editar Fornecedor" : "Cadastro de Fornecedor"}</CardTitle>
         <CardDescription>Preencha as informações do fornecedor</CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="basic" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="basic">Dados Básicos</TabsTrigger>
-            <TabsTrigger value="contact">Contato</TabsTrigger>
-            <TabsTrigger value="address">Endereço</TabsTrigger>
-            <TabsTrigger value="commercial">Comercial</TabsTrigger>
-          </TabsList>
+        <form onSubmit={handleSubmit}>
+          <Tabs defaultValue="basic" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="basic">Básico</TabsTrigger>
+              <TabsTrigger value="contact">Contato</TabsTrigger>
+              <TabsTrigger value="address">Endereço</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="basic" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
+            <TabsContent value="basic" className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="code">Código do Fornecedor</Label>
-                <Input id="code" placeholder="Ex: FORN001" />
+                <Label htmlFor="name">Razão Social *</Label>
+                <Input 
+                  id="name" 
+                  value={formData.name} 
+                  onChange={(e) => handleChange("name", e.target.value)} 
+                  placeholder="Ex: Empresa LTDA" 
+                  required 
+                />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="cnpj">CNPJ</Label>
-                <Input id="cnpj" placeholder="00.000.000/0000-00" />
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="cnpj">CNPJ</Label>
+                  <Input 
+                    id="cnpj" 
+                    value={formData.cnpj} 
+                    onChange={(e) => handleChange("cnpj", e.target.value)} 
+                    placeholder="Ex: 00.000.000/0000-00" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contactName">Nome do Contato</Label>
+                  <Input 
+                    id="contactName" 
+                    value={formData.contactName} 
+                    onChange={(e) => handleChange("contactName", e.target.value)} 
+                    placeholder="Ex: João da Silva" 
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="company-name">Razão Social</Label>
-              <Input id="company-name" placeholder="Ex: Dell Computadores do Brasil Ltda" />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="trade-name">Nome Fantasia</Label>
-              <Input id="trade-name" placeholder="Ex: Dell Inc." />
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="category">Categoria</Label>
-                <Select>
+                <Label htmlFor="status">Status</Label>
+                <Select 
+                  value={formData.isActive.toString()} 
+                  onValueChange={(value) => handleChange("isActive", parseInt(value))}
+                >
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione uma categoria" />
+                    <SelectValue placeholder="Selecione o status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="technology">Tecnologia</SelectItem>
-                    <SelectItem value="peripherals">Periféricos</SelectItem>
-                    <SelectItem value="office">Escritório</SelectItem>
-                    <SelectItem value="furniture">Móveis</SelectItem>
-                    <SelectItem value="cleaning">Limpeza</SelectItem>
+                    <SelectItem value="1">Ativo</SelectItem>
+                    <SelectItem value="0">Inativo</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="ie">Inscrição Estadual</Label>
-                <Input id="ie" placeholder="000.000.000.000" />
-              </div>
-            </div>
+            </TabsContent>
 
-            <div className="flex items-center space-x-2">
-              <Switch id="active" checked={isActive} onCheckedChange={setIsActive} />
-              <Label htmlFor="active">Fornecedor ativo</Label>
-            </div>
-          </TabsContent>
+            <TabsContent value="contact" className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input 
+                    id="email" 
+                    type="email" 
+                    value={formData.email} 
+                    onChange={(e) => handleChange("email", e.target.value)} 
+                    placeholder="Ex: contato@empresa.com" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Telefone</Label>
+                  <Input 
+                    id="phone" 
+                    value={formData.phone} 
+                    onChange={(e) => handleChange("phone", e.target.value)} 
+                    placeholder="(00) 0000-0000" 
+                  />
+                </div>
+              </div>
 
-          <TabsContent value="contact" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="contact-name">Nome do Contato</Label>
-                <Input id="contact-name" placeholder="Ex: João Silva" />
+                <Label htmlFor="mobile">Celular</Label>
+                <Input 
+                  id="mobile" 
+                  value={formData.mobile} 
+                  onChange={(e) => handleChange("mobile", e.target.value)} 
+                  placeholder="(00) 00000-0000" 
+                />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="contact-role">Cargo</Label>
-                <Input id="contact-role" placeholder="Ex: Gerente de Vendas" />
-              </div>
-            </div>
+            </TabsContent>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <TabsContent value="address" className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="phone">Telefone Principal</Label>
-                <Input id="phone" placeholder="(11) 99999-9999" />
+                <Label htmlFor="address">Endereço</Label>
+                <Input 
+                  id="address" 
+                  value={formData.address} 
+                  onChange={(e) => handleChange("address", e.target.value)} 
+                  placeholder="Ex: Rua das Flores, 123" 
+                />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone-alt">Telefone Alternativo</Label>
-                <Input id="phone-alt" placeholder="(11) 88888-8888" />
-              </div>
-            </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="email">E-mail Principal</Label>
-                <Input id="email" type="email" placeholder="vendas@empresa.com" />
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="city">Cidade</Label>
+                  <Input 
+                    id="city" 
+                    value={formData.city} 
+                    onChange={(e) => handleChange("city", e.target.value)} 
+                    placeholder="Ex: São Paulo" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="state">Estado</Label>
+                  <Select 
+                    value={formData.state} 
+                    onValueChange={(value) => handleChange("state", value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="AC">Acre</SelectItem>
+                      <SelectItem value="AL">Alagoas</SelectItem>
+                      <SelectItem value="AP">Amapá</SelectItem>
+                      <SelectItem value="AM">Amazonas</SelectItem>
+                      <SelectItem value="BA">Bahia</SelectItem>
+                      <SelectItem value="CE">Ceará</SelectItem>
+                      <SelectItem value="DF">Distrito Federal</SelectItem>
+                      <SelectItem value="ES">Espírito Santo</SelectItem>
+                      <SelectItem value="GO">Goiás</SelectItem>
+                      <SelectItem value="MA">Maranhão</SelectItem>
+                      <SelectItem value="MT">Mato Grosso</SelectItem>
+                      <SelectItem value="MS">Mato Grosso do Sul</SelectItem>
+                      <SelectItem value="MG">Minas Gerais</SelectItem>
+                      <SelectItem value="PA">Pará</SelectItem>
+                      <SelectItem value="PB">Paraíba</SelectItem>
+                      <SelectItem value="PR">Paraná</SelectItem>
+                      <SelectItem value="PE">Pernambuco</SelectItem>
+                      <SelectItem value="PI">Piauí</SelectItem>
+                      <SelectItem value="RJ">Rio de Janeiro</SelectItem>
+                      <SelectItem value="RN">Rio Grande do Norte</SelectItem>
+                      <SelectItem value="RS">Rio Grande do Sul</SelectItem>
+                      <SelectItem value="RO">Rondônia</SelectItem>
+                      <SelectItem value="RR">Roraima</SelectItem>
+                      <SelectItem value="SC">Santa Catarina</SelectItem>
+                      <SelectItem value="SP">São Paulo</SelectItem>
+                      <SelectItem value="SE">Sergipe</SelectItem>
+                      <SelectItem value="TO">Tocantins</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="zipCode">CEP</Label>
+                  <Input 
+                    id="zipCode" 
+                    value={formData.zipCode} 
+                    onChange={(e) => handleChange("zipCode", e.target.value)} 
+                    placeholder="00000-000" 
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="email-alt">E-mail Alternativo</Label>
-                <Input id="email-alt" type="email" placeholder="comercial@empresa.com" />
-              </div>
-            </div>
+            </TabsContent>
 
-            <div className="space-y-2">
-              <Label htmlFor="website">Website</Label>
-              <Input id="website" placeholder="https://www.empresa.com" />
+            <div className="flex justify-end gap-2 pt-4">
+              <Button type="button" variant="outline" onClick={onCancel}>
+                Cancelar
+              </Button>
+              <Button type="submit">
+                {supplier ? "Atualizar Fornecedor" : "Salvar Fornecedor"}
+              </Button>
             </div>
-          </TabsContent>
-
-          <TabsContent value="address" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="space-y-2">
-                <Label htmlFor="cep">CEP</Label>
-                <Input id="cep" placeholder="00000-000" />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="street">Logradouro</Label>
-                <Input id="street" placeholder="Rua, Avenida, etc." />
-              </div>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-4">
-              <div className="space-y-2">
-                <Label htmlFor="number">Número</Label>
-                <Input id="number" placeholder="123" />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="complement">Complemento</Label>
-                <Input id="complement" placeholder="Sala, Andar, etc." />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="neighborhood">Bairro</Label>
-                <Input id="neighborhood" placeholder="Centro" />
-              </div>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="city">Cidade</Label>
-                <Input id="city" placeholder="São Paulo" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="state">Estado</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="UF" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="SP">SP</SelectItem>
-                    <SelectItem value="RJ">RJ</SelectItem>
-                    <SelectItem value="MG">MG</SelectItem>
-                    <SelectItem value="RS">RS</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="commercial" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="payment-terms">Condições de Pagamento</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione as condições" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="vista">À Vista</SelectItem>
-                    <SelectItem value="30dd">30 dias</SelectItem>
-                    <SelectItem value="60dd">60 dias</SelectItem>
-                    <SelectItem value="30-60dd">30/60 dias</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="delivery-time">Prazo de Entrega (dias)</Label>
-                <Input id="delivery-time" type="number" placeholder="7" />
-              </div>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="min-order">Pedido Mínimo (R$)</Label>
-                <Input id="min-order" type="number" step="0.01" placeholder="0.00" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="discount">Desconto Padrão (%)</Label>
-                <Input id="discount" type="number" step="0.01" placeholder="0.00" />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="bank-details">Dados Bancários</Label>
-              <Textarea id="bank-details" placeholder="Banco, Agência, Conta..." />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="observations">Observações</Label>
-              <Textarea id="observations" placeholder="Observações sobre o fornecedor..." />
-            </div>
-          </TabsContent>
-
-          <div className="flex justify-end gap-2 pt-4">
-            <Button variant="outline">Cancelar</Button>
-            <Button>Salvar Fornecedor</Button>
-          </div>
-        </Tabs>
+          </Tabs>
+        </form>
       </CardContent>
     </Card>
   )

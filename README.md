@@ -2,6 +2,16 @@
 
 Este documento indica onde já existem exemplos ou pontos de partida para os padrões de projeto solicitados, conforme o código atual do VARU.
 
+## Implementações CRUD Completas
+
+Foram implementadas funcionalidades CRUD completas para:
+
+- Clientes
+- Fornecedores
+- Movimentações
+
+Seguindo os mesmos padrões e design do CRUD de produtos já existente.
+
 ---
 
 ## Opção 01

@@ -6,6 +6,16 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 export default function NovoFornecedorPage() {
+  const handleSubmit = (data: any) => {
+    console.log('Submit supplier:', data)
+    // In a real app, you would send this data to your API
+  }
+
+  const handleCancel = () => {
+    console.log('Cancel supplier creation')
+    // In a real app, you would redirect back to the suppliers list
+  }
+
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
@@ -25,7 +35,7 @@ export default function NovoFornecedorPage() {
               </div>
             </div>
 
-            <SupplierForm />
+            <SupplierForm onSubmit={handleSubmit} onCancel={handleCancel} />
           </div>
         </main>
       </div>
