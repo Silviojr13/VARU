@@ -87,4 +87,8 @@ Escolha três padrões diferentes, por exemplo: **Factory**, **Strategy**, **Obs
 - Todos os códigos dos padrões devem ser entregues zipados.
 - É obrigatório entrar na equipe **REUSO** no AVA para receber nota.
 
+
 ---
+
+
+hoje dia 21/10/2025 - foi realizada a seguinte atividade (06 Sistema - Conexão BD, ORM e DatabaseFirst) contendo tudo conforme pedido na ativadade.
